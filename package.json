@@ -16,7 +16,7 @@
   "engines": {
     "node": ">=0.8.0"
   },
-  "author": "kael",
+  "author": "huweixuan",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/kaelzhang/node-cortex-scaffold-generator/issues"
