@@ -22,8 +22,9 @@
     "url": "https://github.com/kaelzhang/node-cortex-scaffold-generator/issues"
   },
   "devDependencies": {
-    "mocha": "~1.13.0",
-    "chai": "~1.8.0"
+    "mocha": "^1.18.2",
+    "chai": "^1.9.1",
+    "jsonfile": "^1.1.1"
   },
   "dependencies": {
     "through": "^2.3.4"
