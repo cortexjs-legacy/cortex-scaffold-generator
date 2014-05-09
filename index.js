@@ -73,4 +73,4 @@ Generator.prototype.generator = function (pkg, opts, callback) {
   exists( path.join('/templates', opts.template), opts.cwd, copy );  
 }
 
-module.exports = generator;
+module.exports = Generator;
