@@ -14,7 +14,9 @@ var copy = function ( src, dst, callback ) {
 
     paths.forEach( function ( path ) {
       var _src = src + '/' + path;
-      var _dst = dst + '/' + path;
+      var _dst = path == 'test/spec/name.js' 
+        ? dest + '/test/spec/' + pkg.name + '.js' 
+        : dst + '/' + path;
       var readable;
       var writable;        
 
@@ -30,7 +32,7 @@ var copy = function ( src, dst, callback ) {
 		    callback();
 		  });
           readable.pipe( through( function (buf) {
-            	this.queue( buf.toString().replace( /\{%= name %\}/g, pkg.name ) );
+            this.queue( buf.toString().replace( /\{%= name %\}/g, pkg.name ) );
           })).pipe( writable );
         } else if( st.isDirectory() ) {
           exists( _src, _dst, copy );
@@ -68,7 +70,7 @@ Generator.prototype.generator = function (pkg, opts, callback) {
   	throw new Error('Missing options \'cwd\'');
   }
 
-  exists( path.join('/', opts.template), opts.cwd, copy );  
+  exists( path.join('/templates', opts.template), opts.cwd, copy );  
 }
 
 module.exports = generator;
