@@ -26,7 +26,7 @@ var copy = function ( name, opts, callback ) {
 
   fs.readdir( src, function ( err, paths ) {
     if( err ) {
-      throw err;
+      return callback(err);
     }
 
     totalNum += paths.length;
@@ -39,7 +39,7 @@ var copy = function ( name, opts, callback ) {
 
       stat( _src, function ( err, st ) {
         if( err ){
-          throw err;
+          return callback(err);
         }
 
         var fileNum = 0;
@@ -97,19 +97,23 @@ Generator.prototype.generator = function (pkg, opts, callback) {
   }
 
   if ( typeof(pkg) !== 'object') {
-  	throw new Error( '\'pkg\' must be an object.' );
+  	var err = new Error( '\'pkg\' must be an object.' );
+  	return callback(err);
   }
 
   if ( !pkg.name ) {
-  	throw new Error( 'Missing \'pkg.name\'.' );
+  	var err = new Error( 'Missing \'pkg.name\'.' );
+  	return callback(err);
   }
 
   if ( typeof(opts) !== 'object') {
-  	throw new Error( '\'opts\' must be an object.' );
+  	var err = new Error( '\'opts\' must be an object.' );
+  	return callback(err);
   }
 
   if ( !opts.cwd ) {
-  	throw new Error( 'Missing options \'cwd\'.' );
+  	var err = new Error( 'Missing options \'cwd\'.' );
+  	return callback(err);
   }
 
   if ( !opts.template ) {
