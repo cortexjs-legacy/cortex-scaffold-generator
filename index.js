@@ -3,61 +3,41 @@
 var fs = require('fs');
 var path = require('path');
 var through = require('through');
+var async = require('async');
 var stat = fs.stat;
-var totalNum = 0;
-
-//When all files were copied, run the 'callback' function.
-var done = function ( fileNum, callback ) {
-  fileNum--;
-  totalNum--;
-
-  if( fileNum === 0 ) {
-    totalNum--;
-  }
-  if( totalNum === 0 ) {
-    callback();
-  }
-}
     
 //Copy all files in the directory, including subdirectories
-var copy = function ( name, opts, callback ) {
+var copy = function ( name, opts, done ) {
   var src = opts.src;
   var dst = opts.dst;
 
   fs.readdir( src, function ( err, paths ) {
     if( err ) {
-      return callback(err);
+      return done(err);
     }
-
-    totalNum += paths.length;
-
-    paths.forEach( function ( path ) {
+    async.each( paths, function ( path, callback ) {
       var _src = src + '/' + path;
       var _dst = path == 'name.js' ? dst + '/' + name + '.js' : dst + '/' + path;
       var readable;
-      var writable;        
+      var writable;
 
       stat( _src, function ( err, st ) {
         if( err ){
           return callback(err);
         }
-
-        var fileNum = 0;
-
         if( st.isFile() ) {
-          fileNum++;
           fs.exists( _dst, function ( exists ) {
             if( !exists || opts.override ) {
               readable = fs.createReadStream( _src );
               writable = fs.createWriteStream( _dst );
               writable.on( 'finish', function () {
-                done(fileNum, callback);
+                callback();
               });
               readable.pipe( through( function (buf) {
                 this.queue( buf.toString().replace( /\{%= name %\}/g, name ) );
               })).pipe( writable );
             } else {
-              done(fileNum, callback);
+              callback();
             }
           });
         } else if( st.isDirectory() ) {
@@ -65,9 +45,14 @@ var copy = function ( name, opts, callback ) {
             src     : _src,  
             dst     : _dst,
             override: opts.override
-          }, callback );
+          }, done );
+          callback();
+        } else {
+          callback();
         }
       });
+    }, function (err) {
+      done(err);
     });
   });
 };
@@ -86,13 +71,10 @@ var exists = function( name, opts, callback ) {
   });
 };
 
-var Generator = function () {
-  this.DEFAULT = 'default';
-};
+var generator = function (pkg, opts, callback) {
 
-Generator.prototype.generator = function (pkg, opts, callback) {
   var default_opts = {
-    template: this.DEFAULT,
+    template: 'default',
     override: false 
   }
 
@@ -131,6 +113,8 @@ Generator.prototype.generator = function (pkg, opts, callback) {
     dst     : opts.cwd,
     override: opts.override
   }, callback );  
-}
+};
 
-module.exports = new Generator();
+generator.AVAILABLE_TEMPLATES = ['default'];
+
+module.exports = generator;
