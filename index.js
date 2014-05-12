@@ -39,8 +39,6 @@ var copy = function ( name, opts, done ) {
             override: opts.override
           }, done );
           callback();
-        } else {
-          callback();
         }
       });
     }, function (err) {
