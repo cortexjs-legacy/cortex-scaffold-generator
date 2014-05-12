@@ -12,10 +12,10 @@ var done = function ( fileNum, callback ) {
   totalNum--;
 
   if( fileNum === 0 ) {
-	totalNum--;
+    totalNum--;
   }
   if( totalNum === 0 ) {
-	callback();
+    callback();
   }
 }
     
@@ -47,25 +47,25 @@ var copy = function ( name, opts, callback ) {
         if( st.isFile() ) {
           fileNum++;
           fs.exists( _dst, function ( exists ) {
-          	if( !exists || opts.override ) {
-	          readable = fs.createReadStream( _src );
-	          writable = fs.createWriteStream( _dst );
-	          writable.on( 'finish', function () {
-	          	done(fileNum, callback);
-			  });
-	          readable.pipe( through( function (buf) {
-	            this.queue( buf.toString().replace( /\{%= name %\}/g, name ) );
-	          })).pipe( writable );
-          	} else {
-          	  done(fileNum, callback);
-          	}
+            if( !exists || opts.override ) {
+              readable = fs.createReadStream( _src );
+              writable = fs.createWriteStream( _dst );
+              writable.on( 'finish', function () {
+                done(fileNum, callback);
+              });
+              readable.pipe( through( function (buf) {
+                this.queue( buf.toString().replace( /\{%= name %\}/g, name ) );
+              })).pipe( writable );
+            } else {
+              done(fileNum, callback);
+            }
           });
         } else if( st.isDirectory() ) {
           exists( name, {
-  	        src     : _src,  
-  		    dst     : _dst,
-  		    override: opts.override
-  	      }, callback );
+            src     : _src,  
+            dst     : _dst,
+            override: opts.override
+          }, callback );
         }
       });
     });
@@ -92,44 +92,44 @@ var Generator = function () {
 
 Generator.prototype.generator = function (pkg, opts, callback) {
   var default_opts = {
-  	template: this.DEFAULT,
+    template: this.DEFAULT,
     override: false 
   }
 
   if ( typeof(pkg) !== 'object') {
-  	var err = new Error( '\'pkg\' must be an object.' );
-  	return callback(err);
+    var err = new Error( '\'pkg\' must be an object.' );
+    return callback(err);
   }
 
   if ( !pkg.name ) {
-  	var err = new Error( 'Missing \'pkg.name\'.' );
-  	return callback(err);
+    var err = new Error( 'Missing \'pkg.name\'.' );
+    return callback(err);
   }
 
   if ( typeof(opts) !== 'object') {
-  	var err = new Error( '\'opts\' must be an object.' );
-  	return callback(err);
+    var err = new Error( '\'opts\' must be an object.' );
+    return callback(err);
   }
 
   if ( !opts.cwd ) {
-  	var err = new Error( 'Missing options \'cwd\'.' );
-  	return callback(err);
+    var err = new Error( 'Missing options \'cwd\'.' );
+    return callback(err);
   }
 
   if ( !opts.template ) {
-  	opts.template = default_opts.template;
+    opts.template = default_opts.template;
   }
 
   if ( typeof(opts.override) === 'undefined' ) {
-  	opts.override = default_opts.override;
+    opts.override = default_opts.override;
   }
 
   callback = callback || function () {};
 
   exists( pkg.name, {
-  	src     : path.join( './templates', opts.template ),  
-  	dst     : opts.cwd,
-  	override: opts.override
+    src     : path.join( './templates', opts.template ),  
+    dst     : opts.cwd,
+    override: opts.override
   }, callback );  
 }
 
