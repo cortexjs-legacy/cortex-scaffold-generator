@@ -4,7 +4,6 @@ var fs = require('fs');
 var path = require('path');
 var through = require('through');
 var async = require('async');
-var util = require('util');
 var stat = fs.stat;
     
 //Copy all files in the directory, including subdirectories
@@ -82,31 +81,31 @@ var generator = function ( pkg, opts, callback ) {
     override: false 
   }
 
-  if ( util.isNullOrUndefined( pkg ) ) {
+  if ( pkg == null ) {
     var err = new Error( '\'pkg\' must be an object.' );
     return callback(err);
   }
 
-  if ( util.isNullOrUndefined( pkg.name ) ) {
+  if ( pkg.name == null ) {
     var err = new Error( 'Missing \'pkg.name\'.' );
     return callback(err);
   }
 
-  if ( util.isNullOrUndefined( opts ) ) {
+  if ( opts == null ) {
     var err = new Error( '\'opts\' must be an object.' );
     return callback(err);
   }
 
-  if ( util.isNullOrUndefined( opts.cwd ) ) {
+  if ( opts.cwd == null ) {
     var err = new Error( 'Missing options \'cwd\'.' );
     return callback(err);
   }
 
-  if ( util.isNullOrUndefined( opts.template ) ) {
+  if ( opts.template == null ) {
     opts.template = default_opts.template;
   }
 
-  if ( util.isNullOrUndefined( opts.override ) ) {
+  if ( opts.override == null ) {
     opts.override = default_opts.override;
   }
 
