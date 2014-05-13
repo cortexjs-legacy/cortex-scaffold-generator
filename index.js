@@ -4,10 +4,11 @@ var fs = require('fs');
 var path = require('path');
 var through = require('through');
 var async = require('async');
+var template = require('template');
 var stat = fs.stat;
     
 //Copy all files in the directory, including subdirectories
-var copy = function ( name, opts, done ) {
+var copy = function ( pkg, opts, done ) {
   var src = opts.src;
   var dst = opts.dst;
 
@@ -17,7 +18,7 @@ var copy = function ( name, opts, done ) {
     }
     async.each( paths, function ( path, callback ) {
       var _src = src + '/' + path;
-      var _dst = path == 'name.js' ? dst + '/' + name + '.js' : dst + '/' + path;
+      var _dst = path == 'name.js' ? dst + '/' + pkg.name + '.js' : dst + '/' + path;
 
       stat( _src, function ( err, st ) {
         if( err ){
@@ -27,17 +28,19 @@ var copy = function ( name, opts, done ) {
           fs.exists( _dst, function ( exists ) {
             //override or not
             if( !exists || opts.override ) {
-              doCopy( name, _src, _dst, callback );
+              doCopy( pkg, _src, _dst, callback );
             } else {
               callback();
             }
           });
         } else if( st.isDirectory() ) {
-          exists( name, {
+          exists( pkg, {
             src     : _src,  
             dst     : _dst,
             override: opts.override
           }, done );
+          callback();
+        } else {
           callback();
         }
       });
@@ -47,26 +50,26 @@ var copy = function ( name, opts, done ) {
   });
 };
 
-var doCopy = function ( name, src, dst, callback ) {
+var doCopy = function ( pkg, src, dst, callback ) {
   var readable = fs.createReadStream( src );
   var writable = fs.createWriteStream( dst );
   writable.on( 'finish', function () {
     callback();
   });
   readable.pipe( through( function (buf) {
-    this.queue( buf.toString().replace( /\{%= name %\}/g, name ) );
+    this.queue( template( buf.toString(), pkg, {delims: ['{%', '%}']} ) );
   })).pipe( writable );
 };
 
 // Before copying directories need to determine that the directory exists or not.
 // If the directory does not exist, need to create a directory
-var exists = function( name, opts, callback ) {
+var exists = function( pkg, opts, callback ) {
   fs.exists( opts.dst, function ( exists ) {
     if( exists ) {
-      copy( name, opts, callback );
+      copy( pkg, opts, callback );
     } else {
       fs.mkdir( opts.dst, function () {
-        copy( name, opts, callback );
+        copy( pkg, opts, callback );
       });
     }
   });
@@ -109,7 +112,7 @@ var generator = function ( pkg, opts, callback ) {
 
   callback = callback || function () {};
 
-  exists( pkg.name, {
+  exists( pkg, {
     src     : path.join( './templates', opts.template ),  
     dst     : opts.cwd,
     override: opts.override
@@ -117,5 +120,10 @@ var generator = function ( pkg, opts, callback ) {
 };
 
 generator.AVAILABLE_TEMPLATES = ['default'];
+
+generator.availableLicences = function () {
+  var AVAILABLE_LICENCES = ['MIT'];
+  return AVAILABLE_LICENCES;
+};
 
 module.exports = generator;

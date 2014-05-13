@@ -1,0 +1,28 @@
+{
+  "name": "{%= name %}",
+  "version": "{%= version %}",
+  "description": "{%= description %}",
+  "homepage": "{%= homepage %}",
+  "main": "{%= main %}",
+  "scripts": {},
+  "repository": {
+    "type": "{%= repository.type %}",
+    "url": "{%= repository.url %}"
+  },
+  "keywords": "",
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "author": "{%= author %}",
+  "bugs": {
+    "url": "{%= bugs.url %}"
+  },
+  "cortex": {
+    "devDependencies": {
+      "neuron": "*"
+    },
+    "asyncDependencies": {},
+    "scripts": {},
+    "dependencies": {}
+  }
+}
