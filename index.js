@@ -3,7 +3,7 @@
 module.exports = generator;
 
 var fs = require('fs');
-var fse = require('fse');
+var fse = require('fs-extra');
 var node_path = require('path');
 var async = require('async');
 var glob = require('glob');
