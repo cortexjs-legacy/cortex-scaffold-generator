@@ -5,6 +5,7 @@ var path = require('path');
 var through = require('through');
 var async = require('async');
 var template = require('ejs');
+var jf = require('jsonfile');
 var stat = fs.stat;
 template.open = '{%';
 template.close = '%}';
@@ -31,6 +32,8 @@ var copy = function ( pkg, opts, done ) {
             //override or not
             if( !exists || opts.override ) {
               doCopy( pkg, _src, _dst, callback );
+            } else if (!opts.override && path == 'package.json') {
+              supplyPackageJson( pkg, _dst, callback );
             } else {
               callback();
             }
@@ -61,6 +64,22 @@ var doCopy = function ( pkg, src, dst, callback ) {
     this.queue( template.render( buf.toString(), pkg ) );
   })).pipe( writable );
 };
+
+var supplyPackageJson = function ( pkg, dst, callback ) {
+  jf.readFile(dst, function(err, obj) {
+    obj.cortex = {
+      "devDependencies": {
+        "neuron": "*"
+      },
+      "asyncDependencies": {},
+      "scripts": {},
+      "dependencies": {}
+    };
+    jf.writeFile(dst, obj, function(err) {
+      callback(err);
+    })
+  });
+}
 
 // Before copying directories need to determine that the directory exists or not.
 // If the directory does not exist, need to create a directory

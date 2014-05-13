@@ -1,0 +1,23 @@
+{
+  "name": "marionette",
+  "version": "1.4.4",
+  "description": "Make your Backbone.js apps dance!",
+  "homepage": "https://github.com/marionettejs/backbone.marionette",
+  "main": "lib/backbone.marionette.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git://code.dianpingoa.com/f2e/marionette.git"
+  },
+  "keywords": "",
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "author": {
+    "name": "Derick Bailey",
+    "email": "derickbailey@gmail.com"
+  },
+  "bugs": {
+    "url": "https://github.com/pvorb/node-clone/issues"
+  }
+}
