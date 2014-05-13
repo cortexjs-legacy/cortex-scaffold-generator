@@ -88,7 +88,7 @@ generator._readAndTemplate = function (path, data, callback) {
       return callback(err);
     }
 
-    content = ejs.render(content, data);
+    content = ejs.render(content.toString(), data);
     callback(null, content);
   });
 };
