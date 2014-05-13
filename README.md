@@ -12,8 +12,9 @@ npm install cortex-scaffold-generator --save
 
 - pkg `Object` the object of cortex.json
 - options `Object`
-	- override `Boolean` whether should override existing files
+	- override `Boolean='false'` whether should override existing files
 	- cwd `path` current working directory
+	- template `String='default'` template name. Actually, there's only one available template which is `'default'`.
 	
 - callback `function(err)`
 - err `Error`
