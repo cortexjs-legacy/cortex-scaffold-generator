@@ -15,25 +15,25 @@ var copy = function ( pkg, opts, done ) {
   var src = opts.src;
   var dst = opts.dst;
 
-  fs.readdir( src, function ( err, paths ) {
+  fs.readdir( src, function ( err, fileNames ) {
     if( err ) {
-      return done(err);
+      return done( err );
     }
-    async.each( paths, function ( path, callback ) {
-      var _src = src + '/' + path;
-      var _dst = path == 'name.js' ? dst + '/' + pkg.name + '.js' : dst + '/' + path;
+    async.each( fileNames, function ( fileName, callback ) {
+      var _src = path.join( src, fileName );
+      var _dst = fileName == 'name.js' 
+        ? path.join( dst, pkg.name + '.js' ) 
+        : path.join( dst, fileName );
 
       stat( _src, function ( err, st ) {
-        if( err ){
-          return callback(err);
+        if( err ) {
+          return callback( err );
         }
         if( st.isFile() ) {
           fs.exists( _dst, function ( exists ) {
             //override or not
             if( !exists || opts.override ) {
               doCopy( pkg, _src, _dst, callback );
-            } else if (!opts.override && path == 'package.json') {
-              supplyPackageJson( pkg, _dst, callback );
             } else {
               callback();
             }
@@ -49,7 +49,9 @@ var copy = function ( pkg, opts, done ) {
         }
       });
     }, function (err) {
-      done(err);
+      writePackageJson( pkg, opts, function (err) {
+        done( err );
+      });
     });
   });
 };
@@ -65,19 +67,42 @@ var doCopy = function ( pkg, src, dst, callback ) {
   })).pipe( writable );
 };
 
-var supplyPackageJson = function ( pkg, dst, callback ) {
-  jf.readFile(dst, function(err, obj) {
-    obj.cortex = {
-      "devDependencies": {
-        "neuron": "*"
-      },
-      "asyncDependencies": {},
-      "scripts": {},
-      "dependencies": {}
-    };
-    jf.writeFile(dst, obj, function(err) {
-      callback(err);
-    })
+var writePackageJson = function ( pkg, opts, done ) {
+  var packageJsonPath = path.join( opts.dst, 'package.json' );
+  fs.exists( packageJsonPath, function ( exists ) {
+    if( exists && !opts.override ) {
+      jf.readFile( packageJsonPath, function ( err, obj ) {
+        if( err ) {
+          return done( err );
+        }
+        obj.cortex = {
+          "devDependencies": {
+            "neuron": "*"
+          },
+          "asyncDependencies": {},
+          "scripts": {},
+          "dependencies": {}
+        };
+        jf.writeFile( packageJsonPath, obj, function ( err ) {
+          done( err );
+        })
+      });
+    } else {
+      var obj = {
+        engines: {
+          node: ">=0.8.0"
+        }
+      };
+      var props = ['name', 'description', 'version', 'repository', 'homepage', 'bugs', 'author'];
+      async.each( props, function ( prop, callback ) {
+        obj[prop] = pkg[prop];
+        callback();
+      }, function ( err ) {
+        jf.writeFile( packageJsonPath, obj, function ( err ) {
+          done( err );
+        })
+      });
+    }
   });
 }
 
@@ -104,22 +129,22 @@ var generator = function ( pkg, opts, callback ) {
 
   if ( pkg == null ) {
     var err = new Error( '\'pkg\' must be an object.' );
-    return callback(err);
+    return callback( err );
   }
 
   if ( pkg.name == null ) {
     var err = new Error( 'Missing \'pkg.name\'.' );
-    return callback(err);
+    return callback( err );
   }
 
   if ( opts == null ) {
     var err = new Error( '\'opts\' must be an object.' );
-    return callback(err);
+    return callback( err );
   }
 
   if ( opts.cwd == null ) {
     var err = new Error( 'Missing options \'cwd\'.' );
-    return callback(err);
+    return callback( err );
   }
 
   if ( opts.template == null ) {
@@ -133,7 +158,7 @@ var generator = function ( pkg, opts, callback ) {
   callback = callback || function () {};
 
   exists( pkg, {
-    src     : path.join( './templates', opts.template ),  
+    src     : path.join( '.', 'templates', opts.template ),  
     dst     : opts.cwd,
     override: opts.override
   }, callback );  
