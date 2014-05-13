@@ -13,7 +13,10 @@
   "engines": {
     "node": ">=0.10.0"
   },
-  "author": "{%= author %}",
+  "author": {
+    "name": "{%= author.name%}",
+    "email": "{%= author.email%}"
+  },
   "bugs": {
     "url": "{%= bugs.url %}"
   },

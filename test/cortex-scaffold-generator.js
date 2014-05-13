@@ -11,7 +11,8 @@ describe( 'generator(pkg, opts, callback)', function () {
       var pkg = jf.readFileSync('test/fixtures/cortex.json');
       var opts = { 
         template: generator.AVAILABLE_TEMPLATES[0],
-        cwd     : 'test/expected'
+        cwd     : 'test/expected',
+        override: true
       };
 
       generator( pkg, opts, function (err) {
