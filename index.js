@@ -4,8 +4,10 @@ var fs = require('fs');
 var path = require('path');
 var through = require('through');
 var async = require('async');
-var template = require('template');
+var template = require('ejs');
 var stat = fs.stat;
+template.open = '{%';
+template.close = '%}';
     
 //Copy all files in the directory, including subdirectories
 var copy = function ( pkg, opts, done ) {
@@ -38,8 +40,7 @@ var copy = function ( pkg, opts, done ) {
             src     : _src,  
             dst     : _dst,
             override: opts.override
-          }, done );
-          callback();
+          }, callback );
         } else {
           callback();
         }
@@ -57,7 +58,7 @@ var doCopy = function ( pkg, src, dst, callback ) {
     callback();
   });
   readable.pipe( through( function (buf) {
-    this.queue( template( buf.toString(), pkg, {delims: ['{%', '%}']} ) );
+    this.queue( template.render( buf.toString(), pkg ) );
   })).pipe( writable );
 };
 

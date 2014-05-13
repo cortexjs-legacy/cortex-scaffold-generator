@@ -29,6 +29,6 @@
   "dependencies": {
     "through": "^2.3.4",
     "async": "^0.8.0",
-    "template": "^0.1.8"
+    "ejs": "^1.0.0"
   }
 }
