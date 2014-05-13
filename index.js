@@ -55,7 +55,7 @@ generator._copyFiles = function(files, options, callback) {
     var file_from = node_path.join(from, file);
 
     if (override) {
-      return generator._copyFile(from, to, data, done);
+      return generator._copyFile(file_from, file_to, data, done);
     }
 
     fs.exists(file_to, function (exists) {
@@ -63,7 +63,7 @@ generator._copyFiles = function(files, options, callback) {
         return done(null);
       }
 
-      generator._copyFile(from, to, data, done);
+      generator._copyFile(file_from, file_to, data, done);
     });
 
   }, callback);
@@ -94,14 +94,18 @@ generator._readAndTemplate = function (path, data, callback) {
 };
 
 
+var REGEX_FILE = /[^\/]$/;
 generator._globDir = function (root, callback) {
   glob('**/*', {
-    cwd: root
+    cwd: root,
+    // Then, the dirs in `files` will end with a slash `/`
+    mark: true
   }, function (err, files) {
     if (err) {
       return callback(err);
     }
 
+    files = files.filter(REGEX_FILE.test, REGEX_FILE)
     callback(null, files);
   });
 };
