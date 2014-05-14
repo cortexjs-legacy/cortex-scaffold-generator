@@ -6,10 +6,15 @@
 // How to use a foreign module ?
 // Take 'sample-cortex-project' for example:
 //
-// 1. to install a dependency, exec the command below inside the current repo:
-// 		cortex install sample-cortex-project --save
+// 1. to install a dependency, exec the command in your terminal
+// ```bash
+// cortex install sample-cortex-project --save
+// ```
+
 // 2. use `require(module_idendifier)` method:
-// 		var hello = require('sample-cortex-project');
+// ```js
+// var hello = require('sample-cortex-project');
+// ```
 
 // `exports` is the API of the current module
 exports.my_method = function() {
@@ -17,8 +22,10 @@ exports.my_method = function() {
 };
 
 // or you could code like this:
-// 		module.exports = {
-// 			my_method: function() {
-// 	    		hello();
-// 			}
-// 		};
+// ```js
+// module.exports = {
+// 	my_method: function() {
+//   		hello();
+// 	}
+// };
+// ```
