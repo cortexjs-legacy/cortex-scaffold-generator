@@ -21,7 +21,7 @@ function generator(pkg, options, callback) {
   var template = options.template || 'default';
   var license = options.license || 'MIT';
 
-  pkg = generator._pkgData(pkg);
+  var cloned_pkg = generator._pkgData(pkg);
 
   if (!~generator.AVAILABLE_TEMPLATES.indexOf(template)) {
     return callback(new Error('Invalid template'));
@@ -43,7 +43,7 @@ function generator(pkg, options, callback) {
         generator._copyFiles(files, {
           from: template_root,
           to: options.cwd,
-          data: pkg,
+          data: cloned_pkg,
           override: options.override
         }, done);
       });
@@ -55,7 +55,7 @@ function generator(pkg, options, callback) {
       generator._copyFile(file, {
         from: node_path.join(__dirname, 'licenses'),
         to: options.cwd,
-        data: pkg,
+        data: cloned_pkg,
         override: options.override
       }, done);
     },
