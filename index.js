@@ -11,6 +11,8 @@ var ejs = require('ejs');
 ejs.open = '{%';
 ejs.close = '%}';
 
+var clone = require('clone');
+
 
 // @param {Object} options
 // - template {string='default'} template name
@@ -18,6 +20,8 @@ ejs.close = '%}';
 function generator(pkg, options, callback) {
   var template = options.template || 'default';
   var license = options.license || 'MIT';
+
+  pkg = generator._pkgData(pkg);
 
   if (!~generator.AVAILABLE_TEMPLATES.indexOf(template)) {
     return callback(new Error('Invalid template'));
@@ -53,10 +57,30 @@ function generator(pkg, options, callback) {
         to: options.cwd,
         data: pkg,
         override: options.override
-      }, done)
+      }, done);
+    },
+
+    // write cortex.json
+    function (done) {
+      var cortex_json = node_path.join(options.cwd, 'cortex.json');
+      generator._writeJson(cortex_json, pkg, done);
     }
 
   ], callback);
+};
+
+
+generator._pkgData = function (pkg) {
+  pkg = clone(pkg);
+
+  // `cortex-init-prompts` ensures that `name` is
+  // - starts with a letter
+  // - only contains letters, numbers, `-` and `.` 
+  var safe_javascript_name = name.replace(/[-\.]/g, '_');
+
+  pkg.js_name = safe_javascript_name;
+
+  return pkg;
 };
 
 
@@ -75,7 +99,16 @@ generator._copyFiles = function(files, options, callback) {
 
 // Params same as `_copyFiles`
 generator._copyFile = function (file, options, callback) {
-  var file_to = node_path.join(options.to, file);
+  var data = options.data;
+  var file_to = node_path.join(
+    options.to,
+
+    // main file needs special treatment
+    file === 'index.js'
+      ? options.data.main
+      : ejs.render(file, data)
+  );
+
   var file_from = node_path.join(options.from, file);
 
   generator._shouldOverride(file_to, options.override, function (override) {
@@ -83,13 +116,32 @@ generator._copyFile = function (file, options, callback) {
       return callback(null);
     }
 
-    generator._readAndTemplate(file_from, options.data, function (err, content) {
+    generator._readAndTemplate(file_from, data, function (err, content) {
       if (err) {
         return callback(err);
       }
 
       fse.outputFile(file_to, content, callback);
     });
+  });
+};
+
+
+generator._writeJson = function (file, json, callback) {
+  fse.outputJson(cortex_json, options.pkg, function (err) {
+    if (err) {
+      return callback({
+        code: 'FAIL_WRITE_JSON',
+        message: 'Failed to write json file "' + file + '": ' + err.stack,
+        data: {
+          error: err,
+          json: json,
+          file: file
+        }
+      });
+    }
+
+    callback(null);
   });
 };
 
