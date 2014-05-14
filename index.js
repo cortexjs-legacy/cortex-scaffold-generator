@@ -83,12 +83,12 @@ generator._copyFile = function (file, options, callback) {
       return callback(null);
     }
 
-    generator._readAndTemplate(from, options.data, function (err, content) {
+    generator._readAndTemplate(file_from, options.data, function (err, content) {
       if (err) {
         return callback(err);
       }
 
-      fse.outputFile(to, content, callback);
+      fse.outputFile(file_to, content, callback);
     });
   });
 };
@@ -144,9 +144,9 @@ generator.AVAILABLE_TEMPLATES = [
 ];
 
 generator.AVAILABLE_LICENSES = [
+  'MIT',
   'Apache-2.0',
   'GPL-2.0',
-  'MIT',
   'MPL-2.0'
 ];
 
