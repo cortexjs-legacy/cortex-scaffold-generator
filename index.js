@@ -17,24 +17,46 @@ ejs.close = '%}';
 // - override
 function generator(pkg, options, callback) {
   var template = options.template || 'default';
+  var license = options.license || 'MIT';
 
   if (!~generator.AVAILABLE_TEMPLATES.indexOf(template)) {
     return callback(new Error('Invalid template'));
   }
 
-  var template_root = node_path.join(__dirname, 'templates', template);
-  generator._globDir(template_root, function (err, files) {
-    if (err) {
-      return callback(err);
+  if (!~generator.AVAILABLE_LICENSES.indexOf(license)) {
+    return callback(new Error('Invalid license'));
+  }
+
+  async.parallel([
+    // copy template
+    function (done) {
+      var template_root = node_path.join(__dirname, 'templates', template);
+      generator._globDir(template_root, function (err, files) {
+        if (err) {
+          return callback(err);
+        }
+
+        generator._copyFiles(files, {
+          from: template_root,
+          to: options.cwd,
+          data: pkg,
+          override: options.override
+        }, callback);
+      });
+    },
+
+    // copy licenses
+    function (done) {
+      var file = 'LICENSE-' + license;
+      generator._copyFile(file, {
+        from: node_path.join(__dirname, 'licenses'),
+        to: options.cwd,
+        data: pkg,
+        override: options.override
+      }, callback)
     }
 
-    generator._copyFiles(files, {
-      from: template_root,
-      to: options.cwd,
-      data: pkg,
-      override: options.override
-    }, callback);
-  });
+  ], callback);
 };
 
 
@@ -45,38 +67,44 @@ function generator(pkg, options, callback) {
 // - data {Object}
 // - override 
 generator._copyFiles = function(files, options, callback) {
-  var from = options.from;
-  var to = options.to;
-  var override = options.override;
-  var data = options.data;
-
   async.each(files, function (file, done) {
-    var file_to = node_path.join(to, file);
-    var file_from = node_path.join(from, file);
-
-    if (override) {
-      return generator._copyFile(file_from, file_to, data, done);
-    }
-
-    fs.exists(file_to, function (exists) {
-      if (exists) {
-        return done(null);
-      }
-
-      generator._copyFile(file_from, file_to, data, done);
-    });
-
+    generator._copyFile(file, options, done);
   }, callback);
 };
 
 
-generator._copyFile = function (from, to, data, callback) {
-  generator._readAndTemplate(from, data, function (err, content) {
-    if (err) {
-      return callback(err);
+// Params same as `_copyFiles`
+generator._copyFile = function (file, options, callback) {
+  var file_to = node_path.join(options.to, file);
+  var file_from = node_path.join(options.from, file);
+
+  generator._shouldOverride(file_to, options.override, function (override) {
+    if (!override) {
+      return callback(null);
     }
 
-    fse.outputFile(to, content, callback);
+    generator._readAndTemplate(from, options.data, function (err, content) {
+      if (err) {
+        return callback(err);
+      }
+
+      fse.outputFile(to, content, callback);
+    });
+  });
+};
+
+
+generator._shouldOverride = function (to, override, callback) {
+  if (override) {
+    return callback(true);
+  }
+
+  fs.exists(to, function (exists) {
+    if (exists) {
+      return done(false);
+    }
+
+    callback(true);
   });
 };
 
@@ -115,15 +143,15 @@ generator.AVAILABLE_TEMPLATES = [
   'default'
 ];
 
-generator.AVAILABLE_LICENCES = [
+generator.AVAILABLE_LICENSES = [
   'Apache-2.0',
   'GPL-2.0',
   'MIT',
   'MPL-2.0'
 ];
 
-generator.availableLicences = function() {
-  return [].concat(generator.AVAILABLE_LICENCES);
+generator.availableLicenses = function() {
+  return [].concat(generator.AVAILABLE_LICENSES);
 };
 
 generator.availableTemplates = function () {
