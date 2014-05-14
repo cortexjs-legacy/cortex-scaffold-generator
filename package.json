@@ -11,7 +11,10 @@
     "url": "git@github.com:kaelzhang/node-cortex-scaffold-generator.git"
   },
   "keywords": [
-    "cortex-scaffold-generator"
+    "cortex",
+    "scaffold",
+    "generator",
+    "init"
   ],
   "engines": {
     "node": ">=0.8.0"
