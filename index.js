@@ -33,7 +33,7 @@ function generator(pkg, options, callback) {
       var template_root = node_path.join(__dirname, 'templates', template);
       generator._globDir(template_root, function (err, files) {
         if (err) {
-          return callback(err);
+          return done(err);
         }
 
         generator._copyFiles(files, {
@@ -41,7 +41,7 @@ function generator(pkg, options, callback) {
           to: options.cwd,
           data: pkg,
           override: options.override
-        }, callback);
+        }, done);
       });
     },
 
@@ -53,7 +53,7 @@ function generator(pkg, options, callback) {
         to: options.cwd,
         data: pkg,
         override: options.override
-      }, callback)
+      }, done)
     }
 
   ], callback);
