@@ -10,7 +10,7 @@ describe( 'generator(pkg, opts, callback)', function () {
     function ( done ) {
       var pkg = jf.readFileSync( 'test/fixtures/cortex1.json' );
       var opts = { 
-        template: generator.AVAILABLE_TEMPLATES[0],
+        template: generator.availableTemplates()[0],
         cwd     : 'test/expected'
       };
 
@@ -26,7 +26,7 @@ describe( 'generator(pkg, opts, callback)', function () {
     function ( done ) {
       var pkg = jf.readFileSync( 'test/fixtures/cortex2.json' );
       var opts = { 
-        template: generator.AVAILABLE_TEMPLATES[0],
+        template: generator.availableTemplates()[0],
         cwd     : 'test/expected',
         override: true
       };
@@ -46,7 +46,7 @@ describe( 'generator(pkg, opts, callback)', function () {
 
       var pkg = jf.readFileSync( 'test/fixtures/cortex2.json' );
       var opts = {
-        template: generator.AVAILABLE_TEMPLATES[0],
+        template: generator.availableTemplates()[0],
         cwd     : 'test/expected',
         override: false
       };
@@ -59,16 +59,16 @@ describe( 'generator(pkg, opts, callback)', function () {
     }
   );
 
-  describe( '#availableLicences()', function () {
+  describe( '#availableLicenses()', function () {
     it( 'should return available licences array', function ( done ) {
-      expect( generator.availableLicences() ).to.be.a( 'array' );
+      expect( generator.availableLicenses() ).to.be.a( 'array' );
       done();
     });
   });
 
-  describe( '#AVAILABLE_TEMPLATES', function () {
+  describe( '#availableTemplates', function () {
     it( 'should return available templates array', function ( done ) {
-      expect(generator.AVAILABLE_TEMPLATES ).to.be.a( 'array' );
+      expect(generator.availableTemplates() ).to.be.a( 'array' );
       done();
     });
   });

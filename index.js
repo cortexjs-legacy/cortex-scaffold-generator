@@ -101,7 +101,7 @@ generator._shouldOverride = function (to, override, callback) {
 
   fs.exists(to, function (exists) {
     if (exists) {
-      return done(false);
+      return callback(false);
     }
 
     callback(true);
