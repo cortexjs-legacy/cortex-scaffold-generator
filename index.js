@@ -80,6 +80,13 @@ generator._pkgData = function (pkg) {
 
   pkg.js_name = safe_javascript_name;
 
+  pkg.main_in_test = 
+    // Relative to test files, pkg.main is outside the current folder
+    node_path.join('..', pkg.main)
+    // Removes ending `.js`
+    // TODO: related to kaelzhang/node-commonjs-walker#10
+    .replace(/\.js$/, '');
+
   return pkg;
 };
 

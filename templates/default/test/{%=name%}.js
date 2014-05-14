@@ -1,6 +1,6 @@
 'use strict';
 
-var {%= js_name %} = require('./index');
+var {%= js_name %} = require('{%= main_in_test %}');
 var assert = require('assert');
 
 describe("description", function(){
