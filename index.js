@@ -76,7 +76,7 @@ generator._pkgData = function (pkg) {
   // `cortex-init-prompts` ensures that `name` is
   // - starts with a letter
   // - only contains letters, numbers, `-` and `.` 
-  var safe_javascript_name = name.replace(/[-\.]/g, '_');
+  var safe_javascript_name = pkg.name.replace(/[-\.]/g, '_');
 
   pkg.js_name = safe_javascript_name;
 
@@ -128,7 +128,7 @@ generator._copyFile = function (file, options, callback) {
 
 
 generator._writeJson = function (file, json, callback) {
-  fse.outputJson(cortex_json, options.pkg, function (err) {
+  fse.outputJson(file, json, function (err) {
     if (err) {
       return callback({
         code: 'FAIL_WRITE_JSON',
