@@ -28,13 +28,13 @@
     "chai": "^1.9.1",
     "jsonfile": "^1.1.1",
     "mocha": "^1.18.2",
-    "tmp-sync": "^0.1.2"
+    "tmp-sync": "^1.0.0"
   },
   "dependencies": {
     "async": "^0.8.0",
     "clone": "^0.1.15",
     "ejs": "^1.0.0",
     "fs-extra": "^0.8.1",
-    "scaffold-generator": "^0.2.0"
+    "scaffold-generator": "^1.0.0"
   }
 }

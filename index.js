@@ -42,19 +42,20 @@ function generator(pkg, options, callback) {
     // copy template
     function (done) {
       var template_root = node_path.join(__dirname, 'templates', template);
-      s.generate(template, options.cwd, done);
+      s.copy(template_root, options.cwd, done);
     },
 
     // copy licenses
     function (done) {
       var file = node_path.join(__dirname, 'licenses', 'LICENSE-' + license);
-      s.generate(file, options.cwd, done);
+      s.copy(file, options.cwd, done);
     },
 
     // write cortex.json
     function (done) {
       var cortex_json = node_path.join(options.cwd, 'cortex.json');
-      generator._writeJson(cortex_json, pkg, done);
+      var content = JSON.stringify(pkg);
+      s.write(cortex_json, content, done);
     }
 
   ], callback);
@@ -79,25 +80,6 @@ generator._pkgData = function (pkg) {
     .replace(/\.js$/, '');
 
   return pkg;
-};
-
-
-generator._writeJson = function (file, json, callback) {
-  fse.outputJson(file, json, function (err) {
-    if (err) {
-      return callback({
-        code: 'FAIL_WRITE_JSON',
-        message: 'Failed to write json file "' + file + '": ' + err.stack,
-        data: {
-          error: err,
-          json: json,
-          file: file
-        }
-      });
-    }
-
-    callback(null);
-  });
 };
 
 
