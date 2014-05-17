@@ -12,6 +12,7 @@ ejs.open = '{%';
 ejs.close = '%}';
 
 var clone = require('clone');
+var scaffold = require('scaffold-generator');
 
 
 // @param {Object} options
