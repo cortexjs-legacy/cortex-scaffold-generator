@@ -6,8 +6,9 @@ var fs = require('fs');
 var fse = require('fs-extra');
 var node_path = require('path');
 var async = require('async');
-var glob = require('glob');
 var ejs = require('ejs');
+
+// Use '{%' which is more friendly to README.md instead of '<%' 
 ejs.open = '{%';
 ejs.close = '%}';
 
@@ -32,33 +33,22 @@ function generator(pkg, options, callback) {
     return callback(new Error('Invalid license'));
   }
 
+  var s = scaffold({
+    data: cloned_pkg,
+    override: options.override
+  });
+
   async.parallel([
     // copy template
     function (done) {
       var template_root = node_path.join(__dirname, 'templates', template);
-      generator._globDir(template_root, function (err, files) {
-        if (err) {
-          return done(err);
-        }
-
-        generator._copyFiles(files, {
-          from: template_root,
-          to: options.cwd,
-          data: cloned_pkg,
-          override: options.override
-        }, done);
-      });
+      s.generate(template, options.cwd, done);
     },
 
     // copy licenses
     function (done) {
-      var file = 'LICENSE-' + license;
-      generator._copyFile(file, {
-        from: node_path.join(__dirname, 'licenses'),
-        to: options.cwd,
-        data: cloned_pkg,
-        override: options.override
-      }, done);
+      var file = node_path.join(__dirname, 'licenses', 'LICENSE-' + license);
+      s.generate(file, options.cwd, done);
     },
 
     // write cortex.json
@@ -92,49 +82,6 @@ generator._pkgData = function (pkg) {
 };
 
 
-// @param {Array} files relative files
-// @param {Object} options
-// - from {path}
-// - to {path}
-// - data {Object}
-// - override 
-generator._copyFiles = function(files, options, callback) {
-  async.each(files, function (file, done) {
-    generator._copyFile(file, options, done);
-  }, callback);
-};
-
-
-// Params same as `_copyFiles`
-generator._copyFile = function (file, options, callback) {
-  var data = options.data;
-  var file_to = node_path.join(
-    options.to,
-
-    // main file needs special treatment
-    file === 'index.js'
-      ? options.data.main
-      : ejs.render(file, data)
-  );
-
-  var file_from = node_path.join(options.from, file);
-
-  generator._shouldOverride(file_to, options.override, function (override) {
-    if (!override) {
-      return callback(null);
-    }
-
-    generator._readAndTemplate(file_from, data, function (err, content) {
-      if (err) {
-        return callback(err);
-      }
-
-      fse.outputFile(file_to, content, callback);
-    });
-  });
-};
-
-
 generator._writeJson = function (file, json, callback) {
   fse.outputJson(file, json, function (err) {
     if (err) {
@@ -150,51 +97,6 @@ generator._writeJson = function (file, json, callback) {
     }
 
     callback(null);
-  });
-};
-
-
-generator._shouldOverride = function (to, override, callback) {
-  if (override) {
-    return callback(true);
-  }
-
-  fs.exists(to, function (exists) {
-    if (exists) {
-      return callback(false);
-    }
-
-    callback(true);
-  });
-};
-
-
-// Reads file and substitute with the data
-generator._readAndTemplate = function (path, data, callback) {
-  fs.readFile(path, function (err, content) {
-    if (err) {
-      return callback(err);
-    }
-
-    content = ejs.render(content.toString(), data);
-    callback(null, content);
-  });
-};
-
-
-var REGEX_FILE = /[^\/]$/;
-generator._globDir = function (root, callback) {
-  glob('**/*', {
-    cwd: root,
-    // Then, the dirs in `files` will end with a slash `/`
-    mark: true
-  }, function (err, files) {
-    if (err) {
-      return callback(err);
-    }
-
-    files = files.filter(REGEX_FILE.test, REGEX_FILE)
-    callback(null, files);
   });
 };
 
