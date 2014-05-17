@@ -53,7 +53,7 @@ Only differences are listed below.
 接下来我们只列出不同的地方
 -->
 	
-#### .\<method-name\>(foo, bar)
+#### .\<method-name\>(foo, bar, bee, boo)
 
 <!-- 
 A method of the instance
@@ -63,10 +63,18 @@ A method of the instance
 
 - foo `String='foo'` description of `foo`
 - bar `Boolean=` description of `bar`
+- bee ``
+- boo `function(arg1, arg2)` what is the method used for
+- arg1 `Object={}`  
 
 <!--
 type ends with `=`(equal) indicates the default value, default to `undefined`
 类型后面跟等号（=）表明了这个参数的默认值
+-->
+
+<!--
+Notice the definition of function type.
+注意函数类型定义的描述。
 -->
 
 
