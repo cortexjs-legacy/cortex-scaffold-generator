@@ -3,73 +3,77 @@
 var expect = require('chai').expect;
 var generator = require('../');
 var fs = require('fs');
+var fse = require('fs-extra');
+var tmp = require('tmp-sync');
+var node_path = require('path');
 var jf = require('jsonfile');
 
-describe( 'generator(pkg, opts, callback)', function () {
-  it( 'should generator files with pkg and opts',
-    function ( done ) {
-      var pkg = jf.readFileSync( 'test/fixtures/cortex1.json' );
-      var opts = { 
-        template: generator.availableTemplates()[0],
-        cwd     : 'test/expected'
-      };
+var pkg = node_path.join(__dirname, 'fixtures', 'package.json');
+pkg = jf.readFileSync(pkg);
 
-      generator( pkg, opts, function ( err ) {
-        var expected = fs.readFileSync( 'test/expected/index.js','utf-8' );
-        expect( expected ).not.to.be.null;
+
+var cases = [
+  {
+    // desc
+    d: 'cortex.json file',
+    // setup
+    // s: function (to) {
+      
+    // },
+    // expect
+    e: function (to) {
+      var new_pkg = jf.readFileSync( node_path.join(to, 'cortex.json') );
+      expect(new_pkg).to.deep.equal(pkg);
+    }
+  },
+  {
+    d: 'rename files',
+    e: function (to) {
+      expect(fs.existsSync(node_path.join(to, 'lib', 'blah.js'))).to.equal(true);
+    }
+  },
+  {
+    d: 'test override',
+    s: function (to) {
+      var file = node_path.join(to, 'cortex.json');
+      fs.writeFileSync(file, 'abc');
+    },
+    o: {
+
+    },
+    e: function (to) {
+      var file = node_path.join(to, 'cortex.json');
+      expect( fs.readFileSync(file).toString() ).to.equal('abc');
+    }
+  }
+];
+
+describe( 'generator(pkg, options, callback)', function (done) {
+  cases.forEach(function (c) {
+    var to = tmp.in(__dirname);
+    c.s && c.s(to);
+    it(c.d, function(done){
+      var options = c.o || {};
+      options.cwd = to;
+      generator(pkg, options, function (err) {
+        c.e(to);
         done();
       });
-    }
-  );
-
-  it( 'should override files when opts.override is true',
-    function ( done ) {
-      var pkg = jf.readFileSync( 'test/fixtures/cortex2.json' );
-      var opts = { 
-        template: generator.availableTemplates()[0],
-        cwd     : 'test/expected',
-        override: true
-      };
-
-      generator( pkg, opts, function ( err ) {
-        var genPkg = jf.readFileSync( 'test/expected/package.json' );
-        expect( genPkg.name ).to.equal( pkg.name );
-        done();
-      });
-    }
-  );
-
-  it( 'should only add cortex config in package.json when opts.override is false',
-    function ( done ) {
-      var packageJsonFile = fs.readFileSync( 'test/fixtures/package.json' );
-      fs.writeFileSync( 'test/expected/package.json', packageJsonFile );
-
-      var pkg = jf.readFileSync( 'test/fixtures/cortex2.json' );
-      var opts = {
-        template: generator.availableTemplates()[0],
-        cwd     : 'test/expected',
-        override: false
-      };
-
-      generator( pkg, opts, function (err) {
-        var genPkg = jf.readFileSync( 'test/expected/package.json' );
-        expect( genPkg.cortex ).not.to.be.null;
-        done();
-      });
-    }
-  );
-
-  describe( '#availableLicenses()', function () {
-    it( 'should return available licences array', function ( done ) {
-      expect( generator.availableLicenses() ).to.be.a( 'array' );
-      done();
     });
   });
+});
 
-  describe( '#availableTemplates', function () {
-    it( 'should return available templates array', function ( done ) {
-      expect(generator.availableTemplates() ).to.be.a( 'array' );
-      done();
-    });
+
+describe( 'generator.availableLicenses()', function () {
+  it( 'should return available licences array', function ( done ) {
+    expect( generator.availableLicenses() ).to.be.a( 'array' );
+    done();
+  });
+});
+
+describe( 'generator.availableTemplates', function () {
+  it( 'should return available templates array', function ( done ) {
+    expect(generator.availableTemplates() ).to.be.a( 'array' );
+    done();
   });
 });
