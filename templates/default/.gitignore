@@ -3,9 +3,6 @@ build/
 .cortex/
 neurons/
 
-# PHP files
-index.php
-
 # Numerous always-ignore extensions
 *.bak
 *.patch
