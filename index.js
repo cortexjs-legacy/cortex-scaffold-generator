@@ -54,8 +54,17 @@ function generator(pkg, options, callback) {
     // write cortex.json
     function (done) {
       var cortex_json = node_path.join(options.cwd, 'cortex.json');
-      var content = JSON.stringify(pkg, null, 2); //format
+      var content = JSON.stringify(pkg, null, 2);
       s.write(cortex_json, content, done);
+    },
+
+    // write package.json
+    function (done) {
+      var package_json = node_path.join(options.cwd, 'package.json');
+      var p = clone(pkg);
+      delete p.devDependencies;
+      var content = JSON.stringify(p, null, 2);
+      s.write(package_json, content, done);
     }
 
   ], callback);
