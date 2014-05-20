@@ -54,7 +54,7 @@ function generator(pkg, options, callback) {
     // write cortex.json
     function (done) {
       var cortex_json = node_path.join(options.cwd, 'cortex.json');
-      var content = JSON.stringify(pkg);
+      var content = JSON.stringify(pkg, null, 2); //format
       s.write(cortex_json, content, done);
     }
 
