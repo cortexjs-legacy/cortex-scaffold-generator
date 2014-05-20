@@ -54,8 +54,19 @@ function generator(pkg, options, callback) {
     // write cortex.json
     function (done) {
       var cortex_json = node_path.join(options.cwd, 'cortex.json');
-      var content = JSON.stringify(pkg);
+      var content = JSON.stringify(pkg,null,4); //format
       s.write(cortex_json, content, done);
+    },
+
+    // write package.json, build will fail if got no package.json
+    // for example:
+    // http://192.168.214.6/job/beta-quanhua.ma-openapp/2/console 
+    function (done) {
+      var p = clone(pkg);
+      delete p.devDependencies;
+      var package_json = node_path.join(options.cwd, 'package.json');
+      var content = JSON.stringify(p,null,4); //format
+      s.write(package_json, content, done);
     }
 
   ], callback);
