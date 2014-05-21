@@ -2,7 +2,7 @@
 
 {%= description %}
 
-## Installation
+## Install
 
 ```bash
 $ cortex install {%= name %} --save
