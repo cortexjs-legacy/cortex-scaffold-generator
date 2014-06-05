@@ -4,12 +4,11 @@
   "description": "Make your Backbone.js apps dance!",
   "homepage": "https://github.com/marionettejs/backbone.marionette",
   "main": "lib/blah.js",
-  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git://code.dianpingoa.com/f2e/marionette.git"
   },
-  "keywords": "",
+  "keywords": [],
   "engines": {
     "node": ">=0.10.0"
   },

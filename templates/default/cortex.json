@@ -5,7 +5,7 @@
   "main": "{%=main%}",
   "repository": {%-: repository | json:2 %},
   "keywords": {%-: keywords | json:2 %},
-  "license": "MIT",
+  "license": "{%=license%}",
   "author": {
     "name": "{%-author.name%}",
     "email": "{%-author.email%}"

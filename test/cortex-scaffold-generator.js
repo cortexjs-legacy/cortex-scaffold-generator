@@ -23,7 +23,9 @@ var cases = [
     // expect
     e: function (to) {
       var new_pkg = jf.readFileSync( node_path.join(to, 'cortex.json') );
-      expect(new_pkg).to.deep.equal(pkg);
+      for (var key in pkg) {
+        expect(pkg[key]).to.deep.equal(new_pkg[key]);
+      }
     }
   },
   {

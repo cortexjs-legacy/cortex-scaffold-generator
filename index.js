@@ -6,7 +6,7 @@ var fs = require('fs');
 var fse = require('fs-extra');
 var node_path = require('path');
 var async = require('async');
-var ejs = require('ejs');
+var ejs = require('ejs-harmony');
 var stringify = require('json-stringify');
 
 ejs.filters.json = function (obj, offset) {
