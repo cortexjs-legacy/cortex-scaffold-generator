@@ -7,6 +7,13 @@ var fse = require('fs-extra');
 var node_path = require('path');
 var async = require('async');
 var ejs = require('ejs');
+var stringify = require('json-stringify');
+
+ejs.filters.json = function (obj, offset) {
+  return stringify(obj || {}, {
+    offset: offset
+  });
+};
 
 // Use '{%' which is more friendly to README.md instead of '<%' 
 var OPEN = '{%';
