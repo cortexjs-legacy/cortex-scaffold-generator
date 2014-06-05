@@ -35,6 +35,7 @@
     "clone": "^0.1.15",
     "ejs": "^1.0.0",
     "fs-extra": "^0.8.1",
-    "scaffold-generator": "^1.0.0"
+    "scaffold-generator": "^1.0.0",
+    "json-stringify": "~0.1.2"
   }
 }

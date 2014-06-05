@@ -1,0 +1,19 @@
+{
+  "name": "{%=name%}",
+  "version": "{%=version%}",
+  "description": "{%-description%}",
+  "main": "{%=main%}",
+  "repository": {%-: repository | json:2 %},
+  "keywords": {%-: keywords | json:2 %},
+  "license": "MIT",
+  "author": {
+    "name": "{%-author.name%}",
+    "email": "{%-author.email%}"
+  },
+  "bugs": {
+    "url": "{%-bugs.url%}"
+  },
+  "homepage": "{%-homepage%}",
+  "engines": {%-: engines | json:2 %},
+  "devDependencies": {%-: devDependencies | json:2 %}
+}
