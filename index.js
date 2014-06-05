@@ -9,8 +9,8 @@ var async = require('async');
 var ejs = require('ejs');
 
 // Use '{%' which is more friendly to README.md instead of '<%' 
-ejs.open = '{%';
-ejs.close = '%}';
+var OPEN = '{%';
+var CLOSE = '%}';
 
 var clone = require('clone');
 var scaffold = require('scaffold-generator');
@@ -35,13 +35,34 @@ function generator(pkg, options, callback) {
 
   var s = scaffold({
     data: cloned_pkg,
-    override: options.override
+    override: options.override,
+    renderer: {
+      render: function (str, data) {
+        // `ejs` confuse data with options, but there is no way out.
+        // Dame it!
+        data.open = OPEN;
+        data.close = CLOSE;
+        return ejs.render(str, data);
+      }
+    }
   });
+  var template_root = node_path.join(__dirname, 'templates', template);
 
+  function write_if_not_exists (file, data, done) {
+    var template_file = node_path.join(template_root, file);
+    fs.exists(template_file, function (exists) {
+      if (exists) {
+        return done(null);
+      }
+      var to = node_path.join(options.cwd, file);
+      s.write(to, data, done);
+    });
+  }
+
+  
   async.parallel([
     // copy template
     function (done) {
-      var template_root = node_path.join(__dirname, 'templates', template);
       s.copy(template_root, options.cwd, done);
     },
 
@@ -53,18 +74,16 @@ function generator(pkg, options, callback) {
 
     // write cortex.json
     function (done) {
-      var cortex_json = node_path.join(options.cwd, 'cortex.json');
       var content = JSON.stringify(pkg, null, 2);
-      s.write(cortex_json, content, done);
+      write_if_not_exists('cortex.json', content, done);
     },
 
     // write package.json
     function (done) {
-      var package_json = node_path.join(options.cwd, 'package.json');
       var p = clone(pkg);
       delete p.devDependencies;
       var content = JSON.stringify(p, null, 2);
-      s.write(package_json, content, done);
+      write_if_not_exists('package.json', content, done);
     }
 
   ], callback);
