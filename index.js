@@ -114,6 +114,10 @@ generator._pkgData = function (pkg) {
     // TODO: related to kaelzhang/node-commonjs-walker#10
     .replace(/\.js$/, '');
 
+  // npm will rename .gitignore to .npmignore:
+  // [ref](https://github.com/npm/npm/issues/1862)
+  pkg.gitignore = '.gitignore';
+
   return pkg;
 };
 
