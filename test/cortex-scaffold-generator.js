@@ -47,6 +47,13 @@ var cases = [
       var file = node_path.join(to, 'cortex.json');
       expect( fs.readFileSync(file).toString() ).to.equal('abc');
     }
+  },
+  {
+    d: 'test .gitignore file',
+    e: function (to) {
+      var file = node_path.join(to, '.gitignore');
+      expect( fs.existsSync(file) ).to.equal(true);
+    }
   }
 ];
 
