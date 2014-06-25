@@ -16,6 +16,7 @@ npm install cortex-scaffold-generator --save
 	- cwd `path` current working directory
 	- template `String='default'` template name. Actually, there's only one available template which is `'default'`.
 	- license `String='MIT'`
+  - neuron_version `String` version of neuron
 	
 - callback `function(err)`
 - err `Error`

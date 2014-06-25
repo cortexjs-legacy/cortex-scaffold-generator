@@ -54,6 +54,16 @@ var cases = [
       var file = node_path.join(to, '.gitignore');
       expect( fs.existsSync(file) ).to.equal(true);
     }
+  },
+  {
+    d: 'neuron version',
+    o: {
+      neuron_version: '5.0.0'
+    },
+    e: function (to) {
+      var index = node_path.join(to, 'index.html');
+      expect( fs.readFileSync(index).toString() ).to.contain('neuron/5.0.0/neuron.js');
+    }
   }
 ];
 

@@ -31,6 +31,7 @@ function generator(pkg, options, callback) {
   var license = options.license || 'MIT';
 
   var cloned_pkg = generator._pkgData(pkg);
+  cloned_pkg.neuron_version = options.neuron_version;
 
   if (!~generator.AVAILABLE_TEMPLATES.indexOf(template)) {
     return callback(new Error('Invalid template'));
