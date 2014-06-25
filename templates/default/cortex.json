@@ -14,6 +14,5 @@
     "url": "{%-bugs.url%}"
   },
   "homepage": "{%-homepage%}",
-  "engines": {%-: engines | json:2 %},
   "devDependencies": {%-: devDependencies | json:2 %}
 }
