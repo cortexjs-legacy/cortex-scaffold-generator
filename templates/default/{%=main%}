@@ -19,7 +19,7 @@
 // `exports` is the API of the current module,
 // If another module `require('{%= name %}')`, it returns `exports`
 exports.my_method = function() {
-    // your code...
+  // your code...
 };
 
 // or you could code like this:
