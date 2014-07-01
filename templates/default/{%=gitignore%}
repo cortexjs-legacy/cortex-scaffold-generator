@@ -34,6 +34,7 @@ neurons
 *.sublime-workspace
 nbproject
 thumbs.db
+*.iml
 
 # Folders to ignore
 .hg
