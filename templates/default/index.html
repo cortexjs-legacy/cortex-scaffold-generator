@@ -2,10 +2,12 @@
 <head>
 <meta charset="UTF-8">
 
-<script src="./neurons/neuron/{%= neuron_version %}/neuron.js"></script>
+<!-- cortex build will generate the two files below. -->
+<script src="./neurons/neuron.js"></script>
 <script src="./neurons/config.js"></script>
 <script>
   neuron.config({
+    // cortex build will generate a folder named `'neurons'` as well as the `'node_modules'` of node.js
     path: './neurons'
   });
 </script>
@@ -14,6 +16,8 @@
 <body>
 <script>
 
+// method `facade` will load a module
+// and try to execute the `init` method of the module exports.
 facade({
   mod: '{%= name %}'
 });

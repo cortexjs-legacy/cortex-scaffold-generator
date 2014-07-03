@@ -18,22 +18,19 @@
 
 // `exports` is the API of the current module,
 // If another module `require('{%= name %}')`, it returns `exports`
-exports.my_method = function() {
-  // your code...
+exports.init = function() {
+  console.log('hello world!');
 };
 
 // or you could code like this:
 // ```js
 // module.exports = {
-// 	my_method: function() {
-//   		hello();
+// 	init: function() {
 // 	}
 // };
 // ```
 
-// But, NEVER do this:
+// But, NEVER do this: (Why?)
 // ```js
 // exports = {my_method: ...}
 // ```
-
-// Why?
