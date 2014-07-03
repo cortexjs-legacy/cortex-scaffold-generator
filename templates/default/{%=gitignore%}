@@ -1,6 +1,4 @@
 # Cortex
-build/
-.cortex/
 neurons
 
 # Numerous always-ignore extensions
