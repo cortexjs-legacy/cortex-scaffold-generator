@@ -3,6 +3,8 @@
 // Use this statement, you can stay away from several frequent mistakes 
 'use strict';
 
+alert('Hello world!');
+
 // How to use a foreign module ?
 // Take 'jquery' for example:
 //
@@ -11,26 +13,24 @@
 // cortex install jquery --save
 // ```
 
-// 2. use `require(id)` method:
-// ```js
-// var $ = require('jquery');
-// ```
+// 2. use `require(id)`:
 
+// var $ = require('jquery');
+
+
+// 3. define exports:
 // `exports` is the API of the current module,
 // If another module `require('{%= name %}')`, it returns `exports`
-exports.init = function() {
-  console.log('hello world!');
-};
+
+// exports.my_method = function() {
+// };
 
 // or you could code like this:
-// ```js
+
 // module.exports = {
-// 	init: function() {
-// 	}
+// 	 my_method: function() {
+// 	 }
 // };
-// ```
 
 // But, NEVER do this: (Why?)
-// ```js
 // exports = {my_method: ...}
-// ```
