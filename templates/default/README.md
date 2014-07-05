@@ -58,7 +58,7 @@ Only differences are listed below.
 接下来我们只列出不同的地方
 -->
 	
-#### .\<method-name\>(foo, bar, [bee], boo)
+#### &lt;method-name&gt;(foo, bar, [bee], boo)
 
 <!-- 
 A method of the instance. Usually, they should be listed inside the `Class` section as <h4> with 4 hashes.
@@ -82,7 +82,7 @@ Notice the definition of function type and optional parameters
 注意函数类型定义的描述，以及可选参数的写法
 -->
 
-#### Event: '\<event-name>'
+#### Event: '&lt;event-name&gt;'
 
 <!--
 Event name should be single-quoted.
@@ -97,7 +97,7 @@ Define the parameters of event handler directly.
 -->
 
 
-### {%= name %}.\<method-name\>(arguments)
+### {%= name %}.&lt;method-name&gt;(arguments)
 
 <!-- 
 The static method.
