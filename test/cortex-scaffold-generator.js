@@ -55,13 +55,13 @@ var cases = [
     }
   },
   {
-    d: 'neuron version',
+    d: 'no neuron version',
     o: {
       neuron_version: '5.0.0'
     },
     e: function (to) {
       var index = node_path.join(to, 'index.html');
-      expect( fs.readFileSync(index).toString() ).to.contain('neuron/5.0.0/neuron.js');
+      expect( fs.readFileSync(index).toString() ).to.contain('neuron.js');
     }
   }
 ];
