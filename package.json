@@ -1,6 +1,6 @@
 {
   "name": "cortex-scaffold-generator",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "Scaffold generator for cortex.",
   "main": "index.js",
   "scripts": {
