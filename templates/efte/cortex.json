@@ -1,0 +1,30 @@
+{
+  "name": "{%=name%}",
+  "version": "{%=version%}",
+  "description": "{%-description%}",
+  "entries": [
+    "entries/**/*.js"
+  ],
+  "devDependencies": {%-: devDependencies | json:2 %},
+  "dependencies": {},
+
+  "scripts": {
+    "prebuild": "./node_modules/.bin/gulp"
+  },
+
+  "directories": {
+    "src": "src"
+  },
+
+  "repository": {%-: repository | json:2 %},
+  "keywords": {%-: keywords | json:2 %},
+  "license": "{%=license%}",
+  "author": {
+    "name": "{%-author.name%}",
+    "email": "{%-author.email%}"
+  },
+  "bugs": {
+    "url": "{%-bugs.url%}"
+  },
+  "homepage": "{%-homepage%}"
+}

@@ -15,7 +15,7 @@ ejs.filters.json = function (obj, offset) {
   });
 };
 
-// Use '{%' which is more friendly to README.md instead of '<%' 
+// Use '{%' which is more friendly to README.md instead of '<%'
 var OPEN = '{%';
 var CLOSE = '%}';
 
@@ -67,8 +67,8 @@ function generator(pkg, options, callback) {
     });
   }
 
-  
-  async.parallel([
+
+  async.series([
     // copy template
     function (done) {
       s.copy(template_root, options.cwd, done);
@@ -103,12 +103,12 @@ generator._pkgData = function (pkg) {
 
   // `cortex-init-prompts` ensures that `name` is
   // - starts with a letter
-  // - only contains letters, numbers, `-` and `.` 
+  // - only contains letters, numbers, `-` and `.`
   var safe_javascript_name = pkg.name.replace(/[-\.]/g, '_');
 
   pkg.js_name = safe_javascript_name;
 
-  pkg.main_in_test = 
+  pkg.main_in_test =
     // Relative to test files, pkg.main is outside the current folder
     node_path.join('..', pkg.main)
     // Removes ending `.js`
@@ -124,7 +124,8 @@ generator._pkgData = function (pkg) {
 
 
 generator.AVAILABLE_TEMPLATES = [
-  'default'
+  'default',
+  'efte'
 ];
 
 generator.AVAILABLE_LICENSES = [
