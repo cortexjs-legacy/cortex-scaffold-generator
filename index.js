@@ -8,7 +8,7 @@ var node_path = require('path');
 var async = require('async');
 var ejs = require('ejs-harmony');
 var stringify = require('json-stringify');
-
+var home = require('home')
 ejs.filters.json = function (obj, offset) {
   return stringify(obj || {}, {
     offset: offset
@@ -22,6 +22,7 @@ var CLOSE = '%}';
 var clone = require('clone');
 var scaffold = require('scaffold-generator');
 
+var DIR_CUSTOM_TEMPLATES = home.resolve("~/.cortex/templates");
 
 // @param {Object} options
 // - template {string='default'} template name
@@ -33,11 +34,11 @@ function generator(pkg, options, callback) {
   var cloned_pkg = generator._pkgData(pkg);
   cloned_pkg.neuron_version = options.neuron_version;
 
-  if (!~generator.AVAILABLE_TEMPLATES.indexOf(template)) {
+  if (!~generator.availableTemplates().indexOf(template)) {
     return callback(new Error('Invalid template'));
   }
 
-  if (!~generator.AVAILABLE_LICENSES.indexOf(license)) {
+  if (!~generator.availableLicenses().indexOf(license)) {
     return callback(new Error('Invalid license'));
   }
 
@@ -54,7 +55,7 @@ function generator(pkg, options, callback) {
       }
     }
   });
-  var template_root = node_path.join(__dirname, 'templates', template);
+  var template_root;
 
   function write_if_not_exists (file, data, done) {
     var template_file = node_path.join(template_root, file);
@@ -69,6 +70,20 @@ function generator(pkg, options, callback) {
 
 
   async.series([
+    // set template root
+    function (done) {
+      var root = node_path.join(__dirname, 'templates', template);
+
+      fs.exists(root, function(exists){
+        if(exists){
+          template_root = root;
+        }else{
+          template_root = node_path.join(DIR_CUSTOM_TEMPLATES, template)
+        }
+        done(null);
+      });
+    },
+
     // copy template
     function (done) {
       s.copy(template_root, options.cwd, done);
@@ -122,10 +137,8 @@ generator._pkgData = function (pkg) {
   return pkg;
 };
 
-
 generator.AVAILABLE_TEMPLATES = [
-  'default',
-  'efte'
+  'default'
 ];
 
 generator.AVAILABLE_LICENSES = [
@@ -140,5 +153,9 @@ generator.availableLicenses = function() {
 };
 
 generator.availableTemplates = function () {
-  return [].concat(generator.AVAILABLE_TEMPLATES);
+  var options = [];
+  if(fs.existsSync(DIR_CUSTOM_TEMPLATES)){
+    options = fs.readdirSync(DIR_CUSTOM_TEMPLATES);
+  }
+  return generator.AVAILABLE_TEMPLATES.concat(options);
 };
