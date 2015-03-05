@@ -155,7 +155,9 @@ generator.availableLicenses = function() {
 generator.availableTemplates = function () {
   var options = [];
   if(fs.existsSync(DIR_CUSTOM_TEMPLATES)){
-    options = fs.readdirSync(DIR_CUSTOM_TEMPLATES);
+    options = fs.readdirSync(DIR_CUSTOM_TEMPLATES).filter(function(dirname){
+      return dirname.indexOf(".") != 0;
+    });
   }
   return generator.AVAILABLE_TEMPLATES.concat(options);
 };
