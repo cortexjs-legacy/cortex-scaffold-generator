@@ -23,6 +23,7 @@ var clone = require('clone');
 var scaffold = require('scaffold-generator');
 
 var DIR_CUSTOM_TEMPLATES = home.resolve("~/.cortex/templates");
+var CORTEX_INIT_SCHEMA = 'CORTEX_INIT_SCHEMA';
 
 // @param {Object} options
 // - template {string='default'} template name
@@ -101,6 +102,16 @@ function generator(pkg, options, callback) {
       write_if_not_exists('cortex.json', content, done);
     },
 
+    // remove extra schema
+    function (done) {
+      fse.remove(node_path.join(options.cwd, CORTEX_INIT_SCHEMA), done);
+    },
+
+    // remove .git folder
+    function (done) {
+      fse.remove(node_path.join(options.cwd, ".git"), done);
+    },
+
     // write package.json
     function (done) {
       var p = clone(pkg);
@@ -151,6 +162,16 @@ generator.AVAILABLE_LICENSES = [
 generator.availableLicenses = function() {
   return [].concat(generator.AVAILABLE_LICENSES);
 };
+
+generator.getExtraSchemas = function(template) {
+  var schema;
+  try{
+    schema = require(node_path.join(DIR_CUSTOM_TEMPLATES, template, CORTEX_INIT_SCHEMA));
+  }catch(e){
+    schema = {};
+  }
+  return schema;
+}
 
 generator.availableTemplates = function () {
   var options = [];
